@@ -6,6 +6,7 @@ import {
   MapPin
 } from "lucide-react";
 import { getEventEmoji } from '@/utils/emojiUtils';
+import { getActivityDescription } from '@/utils/activityDescriptions';
 
 interface ItineraryCardProps {
   item: ItineraryItem;
@@ -37,6 +38,15 @@ export const ItineraryCard = ({ item, isPast, isToday, onUpdateItem, hideDate = 
                 </h3>
               </div>
             </div>
+          </div>
+        </div>
+        
+        {/* Activity Description */}
+        <div className="mb-3 sm:mb-4">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border-l-4 border-blue-400">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {getActivityDescription(item)}
+            </p>
           </div>
         </div>
         

@@ -44,12 +44,12 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
 
   const getTypeColor = (type: string) => {
     const colors = {
-      spiritual: 'bg-purple-200 text-purple-800 border-purple-300',
-      adventure: 'bg-green-200 text-green-800 border-green-300',
-      educational: 'bg-blue-200 text-blue-800 border-blue-300',
-      leisure: 'bg-orange-200 text-orange-800 border-orange-300',
-      travel: 'bg-indigo-200 text-indigo-800 border-indigo-300',
-      cultural: 'bg-pink-200 text-pink-800 border-pink-300'
+      spiritual: 'bg-cyan-100 text-cyan-900 border-cyan-300',
+      adventure: 'bg-lime-100 text-lime-900 border-lime-300',
+      educational: 'bg-sky-100 text-sky-900 border-sky-300',
+      leisure: 'bg-pink-100 text-pink-900 border-pink-300',
+      travel: 'bg-yellow-100 text-yellow-900 border-yellow-300',
+      cultural: 'bg-purple-100 text-purple-900 border-purple-300'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-200 text-gray-800 border-gray-300';
   };

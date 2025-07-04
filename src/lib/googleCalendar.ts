@@ -104,7 +104,28 @@ export class GoogleCalendarService {
     }
   }
 
-  private convertEventToItineraryItem(event: GoogleCalendarEvent): ItineraryItem {
+  private convertEventToItineraryItem(event: GoogleCalendarEvent): ItineraryItem | null {
+    // Debug: Log the event to see its structure
+    console.log('Processing event:', {
+      id: event.id,
+      summary: event.summary,
+      hasSummary: !!event.summary,
+      summaryType: typeof event.summary,
+      start: event.start,
+      end: event.end
+    });
+
+    // Check if summary is missing or not a string
+    if (!event.summary) {
+      console.warn(`Skipping event with ID ${event.id} - missing summary/title:`, event);
+      return null; // Return null to indicate this event should be skipped
+    }
+
+    if (typeof event.summary !== 'string') {
+      console.warn(`Skipping event with ID ${event.id} - invalid summary type: ${typeof event.summary}:`, event);
+      return null; // Return null to indicate this event should be skipped
+    }
+
     // Simple date parsing - assume all dates are in the calendar's timezone
     let startDate: Date;
     let endDate: Date;
@@ -206,7 +227,12 @@ export class GoogleCalendarService {
     try {
       console.log('Getting itinerary items from Google Calendar:', { startDate, endDate, calendarId: this.calendarId });
       const events = await this.fetchEvents(startDate, endDate);
-      const items = events.map(event => this.convertEventToItineraryItem(event));
+      
+      // Convert events to itinerary items, filtering out any that return null
+      const items = events
+        .map(event => this.convertEventToItineraryItem(event))
+        .filter((item): item is ItineraryItem => item !== null);
+      
       console.log('Converted itinerary items:', items.length);
       return items;
     } catch (error) {

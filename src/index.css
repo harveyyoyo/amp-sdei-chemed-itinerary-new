@@ -2,6 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Portal-based tooltip z-index fix - ensure tooltips appear above everything */
+[data-radix-tooltip-content] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+[role="tooltip"] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+[data-state="delayed-open"] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+[data-radix-portal] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+[data-radix-tooltip-root] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+/* Force all tooltip elements to the top with portal positioning */
+[data-radix-tooltip-content][data-state="delayed-open"] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+/* Additional selectors to catch any tooltip elements */
+[data-radix-tooltip-trigger] {
+  z-index: 2147483647 !important;
+}
+
+/* Ensure tooltips are not clipped by any parent containers */
+[data-radix-tooltip-content] {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+}
+
+/* Portal-specific styles */
+body > [data-radix-tooltip-content] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+}
+
+/* Override any overflow hidden on parent containers for tooltips */
+[data-radix-tooltip-content] {
+  overflow: visible !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

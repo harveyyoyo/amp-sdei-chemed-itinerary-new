@@ -22,12 +22,18 @@ import {
   Calendar as CalendarIcon
 } from 'lucide-react';
 import { getEventEmoji } from '@/utils/emojiUtils';
+import { getActivityDescription } from '@/utils/activityDescriptions';
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  // Tooltip,
+  // TooltipTrigger,
+  // TooltipContent,
 } from "@/components/ui/tooltip";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@/components/ui/hover-card";
 
 interface CalendarViewProps {
   items: ItineraryItem[];
@@ -36,6 +42,8 @@ interface CalendarViewProps {
 
 export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [clickedActivity, setClickedActivity] = useState<ItineraryItem | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -57,18 +65,39 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   // Filter out "9 days" events
-  const filteredItems = items.filter(item => 
-    !item.title.toLowerCase().includes('9 days')
-  );
+  const filteredItems = items.filter(item => {
+    // Debug: Log items to see their structure
+    console.log('Processing item:', {
+      id: item.id,
+      title: item.title,
+      hasTitle: !!item.title,
+      titleType: typeof item.title,
+      type: item.type,
+      date: item.date
+    });
+
+    // Check if title is missing or not a string
+    if (!item.title) {
+      console.error('Item missing title:', item);
+      return false; // Skip items without titles
+    }
+
+    if (typeof item.title !== 'string') {
+      console.error('Item title is not a string:', item);
+      return false; // Skip items with invalid title types
+    }
+
+    return !item.title.toLowerCase().includes('9 days');
+  });
 
   const getTypeColor = (type: string) => {
     const colors = {
-      spiritual: 'bg-blue-100 text-blue-800 border-blue-200',
-      adventure: 'bg-orange-100 text-orange-800 border-orange-200',
-      educational: 'bg-green-100 text-green-800 border-green-200',
-      leisure: 'bg-purple-100 text-purple-800 border-purple-200',
-      travel: 'bg-gray-100 text-gray-800 border-gray-200',
-      cultural: 'bg-yellow-100 text-yellow-800 border-yellow-200'
+      spiritual: 'bg-cyan-100 text-cyan-900 border-cyan-300',
+      adventure: 'bg-lime-100 text-lime-900 border-lime-300',
+      educational: 'bg-sky-100 text-sky-900 border-sky-300',
+      leisure: 'bg-pink-100 text-pink-900 border-pink-300',
+      travel: 'bg-yellow-100 text-yellow-900 border-yellow-300',
+      cultural: 'bg-purple-100 text-purple-900 border-purple-300'
     };
     return colors[type as keyof typeof colors] || colors.cultural;
   };
@@ -87,7 +116,7 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   const getMultiDayBackgroundColor = (eventTitle: string) => {
-    const titleLower = eventTitle.toLowerCase();
+    const titleLower = (eventTitle || '').toLowerCase();
     
     // Multi-day event backgrounds: vibrant green, blue, maroon
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
@@ -121,7 +150,7 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   const getMultiDayInvertedColors = (eventTitle: string) => {
-    const titleLower = eventTitle.toLowerCase();
+    const titleLower = (eventTitle || '').toLowerCase();
     
     // Inverted colors for multi-day events based on their background
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
@@ -148,7 +177,7 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   const getMultiDayBadgeColors = (eventTitle: string) => {
-    const titleLower = eventTitle.toLowerCase();
+    const titleLower = (eventTitle || '').toLowerCase();
     
     // Inverted badge colors for multi-day events
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
@@ -210,8 +239,9 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   const generateCalendarDays = () => {
-    const startDate = new Date(2025, 6, 7); // July 7, 2025
-    const endDate = new Date(2025, 7, 18); // August 18, 2025
+    // Use local dates to avoid timezone issues - this ensures July 7 starts on July 7 in all timezones
+    const startDate = new Date(2025, 6, 7); // July 7, 2025 (month is 0-indexed)
+    const endDate = new Date(2025, 7, 18); // August 18, 2025 (month is 0-indexed)
     const days = [];
     
     // Add empty cells to align the first day with correct day of week
@@ -250,7 +280,304 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   };
 
   const generatePDF = () => {
-    window.print();
+    // Create a new window for printing with better styling
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups to print the calendar');
+      return;
+    }
+
+    // Get the current calendar data
+    const calendarHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Camp Sdei Chemed - Summer Itinerary Calendar</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 0.25in;
+            }
+            
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background: white;
+              font-size: 8px;
+              line-height: 1.1;
+            }
+            
+            .header {
+              text-align: center;
+              margin-bottom: 10px;
+              border-bottom: 2px solid #1e40af;
+              padding-bottom: 5px;
+            }
+            
+            .logo {
+              height: 40px;
+              margin-bottom: 5px;
+            }
+            
+            .title {
+              font-size: 18px;
+              font-weight: bold;
+              color: #1e40af;
+              margin: 2px 0;
+            }
+            
+            .subtitle {
+              font-size: 12px;
+              color: #2563eb;
+              font-weight: bold;
+              margin: 2px 0;
+            }
+            
+            .date-range {
+              font-size: 10px;
+              color: #6b7280;
+            }
+            
+            .calendar-container {
+              display: grid;
+              grid-template-columns: repeat(7, 1fr);
+              border: 1px solid #333;
+              background: white;
+            }
+            
+            .calendar-header {
+              display: contents;
+            }
+            
+            .calendar-header > div {
+              padding: 4px 2px;
+              background: linear-gradient(to right, #2563eb, #7c3aed);
+              color: white;
+              font-weight: bold;
+              text-align: center;
+              font-size: 9px;
+              border-right: 1px solid #1e40af;
+              border-bottom: 1px solid #333;
+            }
+            
+            .calendar-header > div:last-child {
+              border-right: none;
+            }
+            
+            .calendar-grid {
+              display: contents;
+            }
+            
+            .calendar-day {
+              min-height: 60px;
+              border-right: 1px solid #ccc;
+              border-bottom: 1px solid #ccc;
+              padding: 2px;
+              position: relative;
+              background: white;
+            }
+            
+            .calendar-day:nth-child(7n) {
+              border-right: none;
+            }
+            
+            .calendar-day.empty {
+              background: #f3f4f6;
+            }
+            
+            .calendar-day.weekend {
+              background: #fef3c7;
+            }
+            
+            .date-number {
+              font-size: 11px;
+              font-weight: bold;
+              text-align: center;
+              margin-bottom: 2px;
+              color: #1f2937;
+            }
+            
+            .date-number.weekend {
+              color: #1e40af;
+            }
+            
+            .month-label {
+              font-size: 6px;
+              background: #dbeafe;
+              color: #1e40af;
+              padding: 1px 2px;
+              border-radius: 2px;
+              margin-left: 1px;
+            }
+            
+            .activity {
+              font-size: 6px;
+              padding: 1px 2px;
+              margin: 0.5px 0;
+              border-radius: 2px;
+              border: 1px solid #ccc;
+              display: flex;
+              align-items: center;
+              gap: 1px;
+              line-height: 1.0;
+              position: relative;
+              cursor: help;
+            }
+            
+            .activity:hover::after {
+              content: attr(data-title);
+              position: absolute;
+              bottom: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              background: rgba(0, 0, 0, 0.9);
+              color: white;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 10px;
+              white-space: nowrap;
+              z-index: 9999;
+              pointer-events: none;
+              margin-bottom: 4px;
+            }
+            
+            .activity:hover::before {
+              content: '';
+              position: absolute;
+              bottom: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              border: 4px solid transparent;
+              border-top-color: rgba(0, 0, 0, 0.9);
+              z-index: 9999;
+              pointer-events: none;
+              margin-bottom: 0;
+            }
+            
+            .activity-emoji {
+              font-size: 8px;
+              flex-shrink: 0;
+            }
+            
+            .activity-title {
+              font-weight: bold;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            
+            .activity.spiritual { background: #e9d5ff; color: #6b21a8; border-color: #c084fc; }
+            .activity.adventure { background: #bbf7d0; color: #166534; border-color: #86efac; }
+            .activity.educational { background: #bfdbfe; color: #1e40af; border-color: #93c5fd; }
+            .activity.leisure { background: #fed7aa; color: #9a3412; border-color: #fdba74; }
+            .activity.travel { background: #c7d2fe; color: #3730a3; border-color: #a5b4fc; }
+            .activity.cultural { background: #fbcfe8; color: #9d174d; border-color: #f9a8d4; }
+            
+            .multiday {
+              background: linear-gradient(135deg, #10b981, #059669) !important;
+              color: white !important;
+              border-color: #047857 !important;
+            }
+            
+            .multiday-tzfat { background: linear-gradient(135deg, #10b981, #059669) !important; color: white !important; }
+            .multiday-shabbos { background: linear-gradient(135deg, #f43f5e, #e11d48) !important; color: white !important; }
+            .multiday-north { background: linear-gradient(135deg, #84cc16, #65a30d) !important; color: white !important; }
+            .multiday-oldcity { background: linear-gradient(135deg, #6366f1, #4f46e5) !important; color: white !important; }
+            .multiday-eilat { background: linear-gradient(135deg, #14b8a6, #0d9488) !important; color: white !important; }
+            .multiday-offshabbos { background: linear-gradient(135deg, #ec4899, #db2777) !important; color: white !important; }
+            
+            @media print {
+              body { margin: 0; }
+              .calendar-grid { page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <img src="https://campsdeichemed.com/wp-content/uploads/2022/09/sdei-chemed-logo-3.png" alt="Camp Sdei Chemed Logo" class="logo">
+            <div class="title">Camp Sdei Chemed - Boys 2025</div>
+            <div class="subtitle">Summer Itinerary Calendar</div>
+            <div class="date-range">July 7 - August 18, 2025</div>
+          </div>
+          
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+            </div>
+            
+            ${calendarDays.map((day, index) => {
+              if (!day) {
+                return '<div class="calendar-day empty"></div>';
+              }
+              
+              const activities = getActivitiesForDay(day);
+              const mobileDayOfWeek = day.getDay();
+              const isWeekend = mobileDayOfWeek === 0 || mobileDayOfWeek === 6;
+              const isMultiDay = activities.some(activity => activity.isMultiDay);
+              const multiDayEvent = activities.find(activity => activity.isMultiDay);
+              
+              // Check if this is a "9 days" event
+              const isNineDays = multiDayEvent && (multiDayEvent.title || '').toLowerCase().includes('9 days');
+              const shouldApplyMultiDayBackground = isMultiDay && multiDayEvent && !isNineDays;
+              
+              let multiDayClass = '';
+              if (shouldApplyMultiDayBackground) {
+                const titleLower = (multiDayEvent?.title || '').toLowerCase();
+                if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) multiDayClass = 'multiday-tzfat';
+                else if (titleLower.includes('shabbos')) multiDayClass = 'multiday-shabbos';
+                else if (titleLower.includes('north overnight') || titleLower.includes('yurts')) multiDayClass = 'multiday-north';
+                else if (titleLower.includes('old city')) multiDayClass = 'multiday-oldcity';
+                else if (titleLower.includes('eilat')) multiDayClass = 'multiday-eilat';
+                else if (titleLower.includes('off shabbos')) multiDayClass = 'multiday-offshabbos';
+                else multiDayClass = 'multiday';
+              }
+              
+              return `
+                <div class="calendar-day ${isWeekend ? 'weekend' : ''} ${multiDayClass}">
+                  <div class="date-number ${isWeekend ? 'weekend' : ''}">
+                    ${day.getDate()}
+                    ${day.getDate() === 7 && day.getMonth() === 6 ? '<span class="month-label">Jul</span>' : ''}
+                    ${day.getDate() === 1 && day.getMonth() === 7 ? '<span class="month-label">Aug</span>' : ''}
+                  </div>
+                  ${activities
+                    .sort((a, b) => {
+                      if (a.isMultiDay && !b.isMultiDay) return -1;
+                      if (!a.isMultiDay && b.isMultiDay) return 1;
+                      return 0;
+                    })
+                    .map(activity => {
+                      const emoji = getEventEmoji(activity.title, activity.type);
+                      const activityClass = activity.isMultiDay ? 'multiday' : `activity ${activity.type}`;
+                      return `
+                        <div class="${activityClass}" data-title="${activity.title}">
+                          <span class="activity-emoji">${emoji}</span>
+                          <span class="activity-title">${activity.title}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(calendarHTML);
+    printWindow.document.close();
+    
+    // Wait for content to load, then print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
   };
 
   const calendarDays = generateCalendarDays();
@@ -293,8 +620,8 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
             <div className="space-y-3">
               {days.map(({ date, activities }) => {
                 const isToday = normalizeDate(date).getTime() === normalizedToday.getTime();
-                const dayOfWeek = date.getDay();
-                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+                const mobileDayOfWeek = date.getDay();
+                const isWeekend = mobileDayOfWeek === 0 || mobileDayOfWeek === 6;
                 
                 return (
                   <Card 
@@ -335,9 +662,10 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
                             return 0;
                           })
                           .map(activity => (
+                          <HoverCard key={activity.id}>
+                            <HoverCardTrigger asChild>
                           <div
-                            key={activity.id}
-                            className={`p-2 rounded border flex items-center gap-2 ${
+                                className={`p-2 rounded border flex items-center gap-2 cursor-help hover:scale-105 transition-transform duration-200 hover:shadow-lg ${
                               activity.isMultiDay 
                                 ? getMultiDayInvertedColors(activity.title)
                                 : `${getTypeColor(activity.type)} bg-white/90 backdrop-blur-sm shadow-sm`
@@ -359,6 +687,56 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
                               </div>
                             </div>
                           </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent
+                              className="px-4 py-3 rounded-xl border-2 border-white/80 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl backdrop-blur-md transition-all duration-200 animate-in fade-in zoom-in-95"
+                              style={{ 
+                                width: '500px', 
+                                maxWidth: '500px',
+                                zIndex: 9999,
+                                pointerEvents: 'auto'
+                              }}
+                            >
+                              {/* Arrow */}
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  left: '50%',
+                                  bottom: '-10px',
+                                  transform: 'translateX(-50%)',
+                                  width: 0,
+                                  height: 0,
+                                  borderLeft: '10px solid transparent',
+                                  borderRight: '10px solid transparent',
+                                  borderTop: '10px solid rgba(255,255,255,0.8)',
+                                  zIndex: 10000,
+                                }}
+                              />
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">
+                                    {getEventEmoji(activity.title, activity.type)}
+                                  </span>
+                                  <div className="font-extrabold text-white text-base leading-tight">
+                                    {activity.title}
+                                  </div>
+                                </div>
+                                
+                                {/* Description */}
+                                <div className="text-xs text-gray-200 leading-relaxed">
+                                  {getActivityDescription(activity)}
+                                </div>
+                                
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  {activity.isMultiDay && (
+                                    <Badge variant="secondary" className="text-xs bg-purple-600 hover:bg-purple-700 text-white border-purple-500 px-2 py-0.5 rounded-full">
+                                      Multi-day
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </HoverCardContent>
+                          </HoverCard>
                         ))}
                       </div>
                     </CardContent>
@@ -388,98 +766,77 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
         </div>
 
         {/* Mobile Calendar Grid - Emoji Only */}
-        <TooltipProvider>
-          <div className="grid grid-cols-7 relative">
-            {calendarDays.map((day, index) => {
-              const activities = day ? getActivitiesForDay(day) : [];
-              const isToday = day && normalizeDate(day).getTime() === normalizedToday.getTime();
-              const isMultiDay = activities.some(activity => activity.isMultiDay);
-              const multiDayEvent = activities.find(activity => activity.isMultiDay);
-              const primaryEmoji = day ? getPrimaryEmojiForDay(day) : null;
-              
-              const regularActivities = activities.filter(activity => !activity.isMultiDay);
-              const dayOfWeek = day ? day.getDay() : 0;
-              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-              
-              // Check if this is a "9 days" event - if so, don't apply multi-day background
-              const isNineDays = multiDayEvent && multiDayEvent.title.toLowerCase().includes('9 days');
-              const shouldApplyMultiDayBackground = isMultiDay && multiDayEvent && !isNineDays;
-              
-              return (
-                <div
-                  key={index}
-                  className={`min-h-[60px] sm:min-h-[140px] p-1 sm:p-3 border-r border-b border-gray-400 last:border-r-0 flex flex-col relative overflow-hidden print:min-h-[120px] print:p-2 ${
-                    day ? (isWeekend ? 'bg-pink-50' : 'bg-white') : 'bg-gray-100'
-                  } ${isToday ? 'ring-2 ring-blue-400 ring-offset-1 sm:ring-offset-2 print:ring-1 print:ring-blue-600' : ''} ${
-                    shouldApplyMultiDayBackground ? getMultiDayBackgroundColor(multiDayEvent.title) : ''
-                  }`}
-                >
-                  {day && (
-                    <>
-                      {/* Enhanced Date Display */}
-                      <div className={`text-sm sm:text-lg font-bold mb-1 sm:mb-3 relative z-10 text-center print:text-base print:mb-2 ${
-                        isToday ? 'text-blue-700' : isWeekend ? 'text-blue-700' : 'text-gray-800'
-                      }`}>
-                        <div className="flex items-center justify-center gap-1">
-                          <span>{day.getDate()}</span>
-                          {day.getDate() === 7 && day.getMonth() === 6 && (
-                            <span className="text-xs text-blue-600 font-bold bg-blue-100 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full print:text-xs print:px-1 print:py-0.5">Jul</span>
-                          )}
-                          {day.getDate() === 1 && day.getMonth() === 7 && (
-                            <span className="text-xs text-blue-600 font-bold bg-blue-100 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full print:text-xs print:px-1 print:py-0.5">Aug</span>
-                          )}
-                        </div>
+        <div className="grid grid-cols-7 relative">
+          {calendarDays.map((day, index) => {
+            const activities = day ? getActivitiesForDay(day) : [];
+            const isToday = day && normalizeDate(day).getTime() === normalizedToday.getTime();
+            const isMultiDay = activities.some(activity => activity.isMultiDay);
+            const multiDayEvent = activities.find(activity => activity.isMultiDay);
+            const primaryEmoji = day ? getPrimaryEmojiForDay(day) : null;
+            
+            const regularActivities = activities.filter(activity => !activity.isMultiDay);
+            const mobileDayOfWeek = day ? day.getDay() : 0;
+            const isWeekend = mobileDayOfWeek === 0 || mobileDayOfWeek === 6;
+            
+            // Check if this is a "9 days" event - if so, don't apply multi-day background
+            const isNineDays = multiDayEvent && (multiDayEvent.title || '').toLowerCase().includes('9 days');
+            const shouldApplyMultiDayBackground = isMultiDay && multiDayEvent && !isNineDays;
+            
+            return (
+              <div
+                key={index}
+                className={`min-h-[60px] sm:min-h-[140px] p-1 sm:p-3 border-r border-b border-gray-400 last:border-r-0 flex flex-col relative overflow-hidden print:min-h-[120px] print:p-2 ${
+                  day ? (isWeekend ? 'bg-pink-50' : 'bg-white') : 'bg-gray-100'
+                } ${isToday ? 'ring-2 ring-blue-400 ring-offset-1 sm:ring-offset-2 print:ring-1 print:ring-blue-600' : ''} ${
+                  shouldApplyMultiDayBackground ? getMultiDayBackgroundColor(multiDayEvent.title) : ''
+                }`}
+              >
+                {day && (
+                  <>
+                    {/* Enhanced Date Display */}
+                    <div className={`text-sm sm:text-lg font-bold mb-1 sm:mb-3 relative z-10 text-center print:text-base print:mb-2 ${
+                      isToday ? 'text-blue-700' : isWeekend ? 'text-blue-700' : 'text-gray-800'
+                    }`}>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>{day.getDate()}</span>
+                        {day.getDate() === 7 && day.getMonth() === 6 && (
+                          <span className="text-xs text-blue-600 font-bold bg-blue-100 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full print:text-xs print:px-1 print:py-0.5">Jul</span>
+                        )}
+                        {day.getDate() === 1 && day.getMonth() === 7 && (
+                          <span className="text-xs text-blue-600 font-bold bg-blue-100 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full print:text-xs print:px-1 print:py-0.5">Aug</span>
+                        )}
                       </div>
-                      
-                      {/* Mobile: Emoji-only Activities with Tooltips */}
-                      <div className="flex flex-wrap gap-1 justify-center items-center flex-1 relative z-10">
-                        {activities
-                          .sort((a, b) => {
-                            // Multi-day events first, then by type
-                            if (a.isMultiDay && !b.isMultiDay) return -1;
-                            if (!a.isMultiDay && b.isMultiDay) return 1;
-                            return 0;
-                          })
-                          .map(activity => (
-                          <Tooltip key={activity.id}>
-                            <TooltipTrigger asChild>
-                              <div
-                                className={`text-lg sm:text-xl p-1 rounded cursor-pointer transition-all hover:scale-110 ${
-                                  activity.isMultiDay 
-                                    ? 'bg-black/20 text-white'
-                                    : 'bg-white/80 shadow-sm'
-                                }`}
-                              >
-                                {getEventEmoji(activity.title, activity.type)}
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-xs">
-                              <div className="space-y-2">
-                                <div className="font-semibold text-sm">
-                                  {activity.title}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {activity.isMultiDay && (
-                                    <Badge variant="outline" className="text-xs">
-                                      Multi-day
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                  {activity.date}
-                                </div>
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
+                    </div>
+                    
+                    {/* Mobile: Emoji-only Activities with Click Handler */}
+                    <div className="flex flex-wrap gap-1 justify-center items-center flex-1 relative z-10">
+                      {activities
+                        .sort((a, b) => {
+                          // Multi-day events first, then by type
+                          if (a.isMultiDay && !b.isMultiDay) return -1;
+                          if (!a.isMultiDay && b.isMultiDay) return 1;
+                          return 0;
+                        })
+                        .map(activity => (
+                          <div
+                            key={activity.id}
+                            onClick={() => handleActivityClick(activity)}
+                            className={`text-lg sm:text-xl p-1 rounded cursor-pointer transition-all hover:scale-110 active:scale-95 ${
+                              activity.isMultiDay 
+                                ? 'bg-black/20 text-white'
+                                : 'bg-white/80 shadow-sm'
+                            }`}
+                          >
+                            {getEventEmoji(activity.title, activity.type)}
+                          </div>
                         ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </TooltipProvider>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </CardContent>
     </Card>
   );
@@ -509,11 +866,11 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
             const primaryEmoji = day ? getPrimaryEmojiForDay(day) : null;
             
             const regularActivities = activities.filter(activity => !activity.isMultiDay);
-            const dayOfWeek = day ? day.getDay() : 0;
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const mobileDayOfWeek = day ? day.getDay() : 0;
+            const isWeekend = mobileDayOfWeek === 0 || mobileDayOfWeek === 6;
             
             // Check if this is a "9 days" event - if so, don't apply multi-day background
-            const isNineDays = multiDayEvent && multiDayEvent.title.toLowerCase().includes('9 days');
+            const isNineDays = multiDayEvent && (multiDayEvent.title || '').toLowerCase().includes('9 days');
             const shouldApplyMultiDayBackground = isMultiDay && multiDayEvent && !isNineDays;
             
             return (
@@ -552,38 +909,148 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
                           return 0;
                         })
                         .map(activity => (
-                        <div
-                          key={activity.id}
-                          className={`text-xs p-0.5 sm:p-1 rounded border flex items-center gap-1 sm:gap-2 leading-tight font-medium print:p-1 print:text-xs ${
-                            activity.isMultiDay 
-                              ? getMultiDayInvertedColors(activity.title)
-                              : `${getTypeColor(activity.type)} bg-white/90 backdrop-blur-sm shadow-sm`
-                          }`}
-                        >
-                          <span className="text-sm sm:text-lg flex-shrink-0 print:text-lg">
-                            {getEventEmoji(activity.title, activity.type)}
-                          </span>
-                          <span className="font-semibold text-xs leading-tight truncate print:text-xs">
-                            {activity.title}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            );
+                          <HoverCard key={activity.id}>
+                            <HoverCardTrigger asChild>
+                          <div
+                                className={`text-xs p-0.5 sm:p-1 rounded border flex items-center gap-1 sm:gap-2 leading-tight font-medium print:p-1 print:text-xs cursor-help hover:scale-105 transition-transform duration-200 hover:shadow-lg ${
+                        activity.isMultiDay 
+                          ? getMultiDayInvertedColors(activity.title)
+                          : `${getTypeColor(activity.type)} bg-white/90 backdrop-blur-sm shadow-sm`
+                      }`}
+                  >
+                    <span className="text-sm sm:text-lg flex-shrink-0 print:text-lg">
+                      {getEventEmoji(activity.title, activity.type)}
+                    </span>
+                    <span className="font-semibold text-xs leading-tight truncate print:text-xs">
+                      {activity.title}
+                    </span>
+                  </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent
+                              className="px-4 py-3 rounded-xl border-2 border-white/80 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl backdrop-blur-md transition-all duration-200 animate-in fade-in zoom-in-95"
+                              style={{ 
+                                width: '500px', 
+                                maxWidth: '500px',
+                                zIndex: 9999,
+                                pointerEvents: 'auto'
+                              }}
+                            >
+                              {/* Arrow */}
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  left: '50%',
+                                  bottom: '-10px',
+                                  transform: 'translateX(-50%)',
+                                  width: 0,
+                                  height: 0,
+                                  borderLeft: '10px solid transparent',
+                                  borderRight: '10px solid transparent',
+                                  borderTop: '10px solid rgba(255,255,255,0.8)',
+                                  zIndex: 10000,
+                                }}
+                              />
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">
+                                    {getEventEmoji(activity.title, activity.type)}
+                                  </span>
+                                  <div className="font-extrabold text-white text-base leading-tight">
+                                    {activity.title}
+                                  </div>
+                                </div>
+                                
+                                {/* Description */}
+                                <div className="text-xs text-gray-200 leading-relaxed">
+                                  {getActivityDescription(activity)}
+                                </div>
+                                
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  {activity.isMultiDay && (
+                                    <Badge variant="secondary" className="text-xs bg-purple-600 hover:bg-purple-700 text-white border-purple-500 px-2 py-0.5 rounded-full">
+                                      Multi-day
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </HoverCardContent>
+                          </HoverCard>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
           })}
         </div>
       </CardContent>
     </Card>
   );
 
+  const handleActivityClick = (activity: ItineraryItem) => {
+    setClickedActivity(activity);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setClickedActivity(null);
+  };
+
+  // Activity Details Dialog for Mobile
+  const ActivityDialog = () => (
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogContent className="max-w-sm mx-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-3">
+            <span className="text-3xl">
+              {clickedActivity && getEventEmoji(clickedActivity.title, clickedActivity.type)}
+            </span>
+            <span className="text-lg font-bold">
+              {clickedActivity?.title}
+            </span>
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          {clickedActivity?.isMultiDay && (
+            <Badge variant="secondary" className="text-sm bg-purple-600 hover:bg-purple-700 text-white border-purple-500 px-3 py-1 rounded-full">
+              Multi-day Event
+            </Badge>
+          )}
+          
+          {/* Description */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border-l-4 border-blue-400">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {clickedActivity && getActivityDescription(clickedActivity)}
+            </p>
+          </div>
+          
+          <div className="text-sm text-gray-600 space-y-2">
+            <p><strong>Type:</strong> <span className="capitalize">{clickedActivity?.type}</span></p>
+            <p><strong>Date:</strong> {clickedActivity?.fullDate.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <div className="w-full">
-      <div className="flex justify-end mb-4 print:hidden px-2 sm:px-6">
-        <Button onClick={generatePDF} variant="outline" className="flex items-center gap-2 text-xs sm:text-sm">
-          <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+      <div className="flex justify-between items-center mb-4 print:hidden px-2 sm:px-6">
+        <div className="text-sm text-gray-600">
+          💡 <span className="hidden sm:inline">Click "Print Calendar" for a better formatted version</span>
+          <span className="sm:hidden">💡 Better print version available</span>
+        </div>
+        <Button 
+          onClick={generatePDF} 
+          className="flex items-center gap-2 text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          <Download className="w-4 h-4" />
           <span className="hidden sm:inline">Print Calendar</span>
           <span className="sm:hidden">Print</span>
         </Button>
@@ -615,6 +1082,8 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
           <DesktopGridView />
         </div>
       </div>
+
+      <ActivityDialog />
     </div>
   );
 };
