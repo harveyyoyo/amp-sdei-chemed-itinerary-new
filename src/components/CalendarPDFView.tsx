@@ -44,12 +44,12 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
 
   const getTypeColor = (type: string) => {
     const colors = {
-      spiritual: 'bg-cyan-100 text-cyan-900 border-cyan-300',
-      adventure: 'bg-lime-100 text-lime-900 border-lime-300',
+      spiritual: 'bg-amber-100 text-amber-900 border-amber-300',
+      adventure: 'bg-emerald-100 text-emerald-900 border-emerald-300',
       educational: 'bg-sky-100 text-sky-900 border-sky-300',
-      leisure: 'bg-pink-100 text-pink-900 border-pink-300',
-      travel: 'bg-yellow-100 text-yellow-900 border-yellow-300',
-      cultural: 'bg-purple-100 text-purple-900 border-purple-300'
+      leisure: 'bg-rose-100 text-rose-900 border-rose-300',
+      travel: 'bg-orange-100 text-orange-900 border-orange-300',
+      cultural: 'bg-violet-100 text-violet-900 border-violet-300'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-200 text-gray-800 border-gray-300';
   };
@@ -57,31 +57,31 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
   const getMultiDayBackgroundColor = (eventTitle: string) => {
     const titleLower = eventTitle.toLowerCase();
     
-    // Multi-day event backgrounds: vibrant green, blue, maroon
+    // Multi-day event backgrounds: Earth & Adventure palette
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
-      return 'bg-gradient-to-br from-emerald-200 to-green-300 border-emerald-400';
+      return 'bg-gradient-to-br from-amber-200 to-orange-300 border-amber-400';
     }
     if (titleLower.includes('shabbos')) {
-      return 'bg-gradient-to-br from-rose-200 to-red-300 border-rose-400';
+      return 'bg-gradient-to-br from-emerald-200 to-green-300 border-emerald-400';
     }
     if (titleLower.includes('north overnight') || titleLower.includes('yurts')) {
-      return 'bg-gradient-to-br from-lime-200 to-green-300 border-lime-400';
+      return 'bg-gradient-to-br from-sky-200 to-blue-300 border-sky-400';
     }
     if (titleLower.includes('old city')) {
-      return 'bg-gradient-to-br from-indigo-200 to-blue-300 border-indigo-400';
+      return 'bg-gradient-to-br from-violet-200 to-purple-300 border-violet-400';
     }
     if (titleLower.includes('eilat')) {
-      return 'bg-gradient-to-br from-teal-200 to-cyan-300 border-teal-400';
+      return 'bg-gradient-to-br from-rose-200 to-pink-300 border-rose-400';
     }
     if (titleLower.includes('off shabbos')) {
-      return 'bg-gradient-to-br from-pink-200 to-rose-300 border-pink-400';
+      return 'bg-gradient-to-br from-teal-200 to-cyan-300 border-teal-400';
     }
     
-    // Rotate between vibrant colors for other multi-day events
+    // Rotate between earth & adventure colors for other multi-day events
     const colors = [
+      'bg-gradient-to-br from-amber-200 to-orange-300 border-amber-400',
       'bg-gradient-to-br from-emerald-200 to-green-300 border-emerald-400',
       'bg-gradient-to-br from-sky-200 to-blue-300 border-sky-400',
-      'bg-gradient-to-br from-rose-200 to-red-300 border-rose-400',
     ];
     
     const hash = eventTitle.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -93,22 +93,22 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
     
     // Inverted colors for multi-day events based on their background
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
-      return 'bg-emerald-800 text-white border-emerald-600';
+      return 'bg-amber-800 text-white border-amber-600';
     }
     if (titleLower.includes('shabbos')) {
-      return 'bg-rose-800 text-white border-rose-600';
+      return 'bg-emerald-800 text-white border-emerald-600';
     }
     if (titleLower.includes('north overnight') || titleLower.includes('yurts')) {
-      return 'bg-lime-800 text-white border-lime-600';
+      return 'bg-sky-800 text-white border-sky-600';
     }
     if (titleLower.includes('old city')) {
-      return 'bg-indigo-800 text-white border-indigo-600';
+      return 'bg-violet-800 text-white border-violet-600';
     }
     if (titleLower.includes('eilat')) {
-      return 'bg-teal-800 text-white border-teal-600';
+      return 'bg-rose-800 text-white border-rose-600';
     }
     if (titleLower.includes('off shabbos')) {
-      return 'bg-pink-800 text-white border-pink-600';
+      return 'bg-teal-800 text-white border-teal-600';
     }
     
     // Default inverted colors for other multi-day events
@@ -120,22 +120,22 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
     
     // Inverted badge colors for multi-day events
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
-      return 'bg-emerald-700 text-white border-emerald-500';
+      return 'bg-amber-700 text-white border-amber-500';
     }
     if (titleLower.includes('shabbos')) {
-      return 'bg-rose-700 text-white border-rose-500';
+      return 'bg-emerald-700 text-white border-emerald-500';
     }
     if (titleLower.includes('north overnight') || titleLower.includes('yurts')) {
-      return 'bg-lime-700 text-white border-lime-500';
+      return 'bg-sky-700 text-white border-sky-500';
     }
     if (titleLower.includes('old city')) {
-      return 'bg-indigo-700 text-white border-indigo-500';
+      return 'bg-violet-700 text-white border-violet-500';
     }
     if (titleLower.includes('eilat')) {
-      return 'bg-teal-700 text-white border-teal-500';
+      return 'bg-rose-700 text-white border-rose-500';
     }
     if (titleLower.includes('off shabbos')) {
-      return 'bg-pink-700 text-white border-pink-500';
+      return 'bg-teal-700 text-white border-teal-500';
     }
     
     // Default inverted badge colors
@@ -245,7 +245,7 @@ export const CalendarPDFView = ({ items }: CalendarPDFViewProps) => {
           <div className="grid grid-cols-7 bg-gradient-to-r from-blue-600 to-purple-600 border-b-2 border-blue-700">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
               <div key={day} className={`p-3 text-center text-sm font-bold text-white border-r border-blue-500 last:border-r-0 ${
-                index === 5 ? 'bg-blue-700' : index === 6 ? 'bg-purple-700' : ''
+                index === 6 ? 'bg-purple-700' : ''
               }`}>
                 {day}
               </div>

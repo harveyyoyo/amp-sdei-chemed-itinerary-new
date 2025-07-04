@@ -63,58 +63,89 @@ body > [data-radix-tooltip-content] {
 
 @layer base {
   :root {
+    /* Modern Earth & Adventure Theme */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 20 14% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 20 14% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 20 14% 4%;
+    
+    /* Primary: Warm Terracotta/Orange */
+    --primary: 16 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Secondary: Sage Green */
+    --secondary: 120 15% 90%;
+    --secondary-foreground: 20 14% 4%;
+    
+    /* Muted: Warm Gray */
+    --muted: 20 6% 90%;
+    --muted-foreground: 25 5% 45%;
+    
+    /* Accent: Golden Yellow */
+    --accent: 45 93% 47%;
+    --accent-foreground: 20 14% 4%;
+    
+    /* Destructive: Warm Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders & Inputs: Warm Gray */
+    --border: 20 6% 85%;
+    --input: 20 6% 85%;
+    --ring: 16 100% 50%;
+    
+    /* Chart Colors: Earth & Adventure Palette */
+    --chart-1: 16 100% 50%;  /* Terracotta */
+    --chart-2: 120 30% 40%;  /* Forest Green */
+    --chart-3: 45 93% 47%;   /* Golden Yellow */
+    --chart-4: 200 70% 50%;  /* Ocean Blue */
+    --chart-5: 280 60% 60%;  /* Purple */
+    
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Dark Earth & Adventure Theme */
+    --background: 20 14% 4%;
+    --foreground: 60 9% 98%;
+    --card: 20 14% 4%;
+    --card-foreground: 60 9% 98%;
+    --popover: 20 14% 4%;
+    --popover-foreground: 60 9% 98%;
+    
+    /* Primary: Warm Terracotta (darker) */
+    --primary: 16 100% 60%;
+    --primary-foreground: 20 14% 4%;
+    
+    /* Secondary: Dark Sage */
+    --secondary: 120 10% 15%;
+    --secondary-foreground: 60 9% 98%;
+    
+    /* Muted: Dark Warm Gray */
+    --muted: 20 10% 15%;
+    --muted-foreground: 25 5% 65%;
+    
+    /* Accent: Golden Yellow (darker) */
+    --accent: 45 80% 40%;
+    --accent-foreground: 60 9% 98%;
+    
+    /* Destructive: Dark Red */
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 60 9% 98%;
+    
+    /* Borders & Inputs: Dark Warm Gray */
+    --border: 20 10% 15%;
+    --input: 20 10% 15%;
+    --ring: 16 100% 60%;
+    
+    /* Chart Colors: Dark Earth & Adventure Palette */
+    --chart-1: 16 100% 60%;  /* Terracotta */
+    --chart-2: 120 40% 50%;  /* Forest Green */
+    --chart-3: 45 80% 50%;   /* Golden Yellow */
+    --chart-4: 200 80% 60%;  /* Ocean Blue */
+    --chart-5: 280 70% 70%;  /* Purple */
   }
 }
 
@@ -250,40 +281,39 @@ body > [data-radix-tooltip-content] {
   }
   
   /* Maintain background colors in print with enhanced colors */
-  .bg-purple-100 { background-color: #f3e8ff !important; }
-  .bg-red-100 { background-color: #fee2e2 !important; }
-  .bg-blue-100 { background-color: #dbeafe !important; }
-  .bg-green-100 { background-color: #dcfce7 !important; }
   .bg-amber-100 { background-color: #fef3c7 !important; }
-  .bg-cyan-100 { background-color: #cffafe !important; }
-  .bg-pink-100 { background-color: #fce7f3 !important; }
+  .bg-emerald-100 { background-color: #d1fae5 !important; }
+  .bg-sky-100 { background-color: #e0f2fe !important; }
+  .bg-rose-100 { background-color: #ffe4e6 !important; }
+  .bg-orange-100 { background-color: #ffedd5 !important; }
+  .bg-violet-100 { background-color: #f3e8ff !important; }
   .bg-gray-100 { background-color: #f3f4f6 !important; }
   .bg-white { background-color: white !important; }
   .bg-blue-50 { background-color: #eff6ff !important; }
   
   /* Enhanced color backgrounds for activity types */
-  .bg-purple-200 { background-color: #e9d5ff !important; }
-  .bg-green-200 { background-color: #bbf7d0 !important; }
-  .bg-blue-200 { background-color: #bfdbfe !important; }
+  .bg-amber-200 { background-color: #fde68a !important; }
+  .bg-emerald-200 { background-color: #a7f3d0 !important; }
+  .bg-sky-200 { background-color: #bae6fd !important; }
+  .bg-rose-200 { background-color: #fecdd3 !important; }
   .bg-orange-200 { background-color: #fed7aa !important; }
-  .bg-indigo-200 { background-color: #c7d2fe !important; }
-  .bg-pink-200 { background-color: #fbcfe8 !important; }
+  .bg-violet-200 { background-color: #e9d5ff !important; }
   .bg-gray-200 { background-color: #e5e7eb !important; }
   
   /* Text colors for print */
-  .text-purple-800 { color: #6b21a8 !important; }
-  .text-green-800 { color: #166534 !important; }
-  .text-blue-800 { color: #1e40af !important; }
+  .text-amber-800 { color: #92400e !important; }
+  .text-emerald-800 { color: #065f46 !important; }
+  .text-sky-800 { color: #075985 !important; }
+  .text-rose-800 { color: #9f1239 !important; }
   .text-orange-800 { color: #9a3412 !important; }
-  .text-indigo-800 { color: #3730a3 !important; }
-  .text-pink-800 { color: #9d174d !important; }
+  .text-violet-800 { color: #5b21b6 !important; }
   .text-gray-800 { color: #1f2937 !important; }
   .text-blue-700 { color: #1d4ed8 !important; }
   .text-indigo-600 { color: #4f46e5 !important; }
   
   /* Header gradient colors for print */
-  .from-indigo-500 { background: #6366f1 !important; }
-  .to-purple-600 { background: linear-gradient(to right, #6366f1, #9333ea) !important; }
+  .from-orange-500 { background: #f97316 !important; }
+  .to-yellow-500 { background: linear-gradient(to right, #f97316, #eab308) !important; }
   
   /* Ultra-compact text sizing for print */
   h1 { 

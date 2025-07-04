@@ -1,10 +1,9 @@
-
 import { Calendar, MapPin, Users, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const ItineraryHeader = () => {
   return (
-    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 text-white p-8 rounded-xl mb-8">
+    <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 text-white p-8 rounded-xl mb-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-center mb-6">
           <img 
