@@ -95,7 +95,6 @@ export const getActivityDescription = (activity: ItineraryItem) => {
     return "Head to Meiron to visit the resting place of Rabbi Shimon bar Yochai, author of the Zohar. Whether you come to daven or just to think, it's a powerful experience.";
   }
   if (titleLower.includes('kotel tunnel tours') || titleLower.includes('kotel tunnel')) {
-    console.log('Kotel Tunnel description matched for:', activity.title);
     return "Venture deep beneath the surface to explore the hidden Kotel Tunnels—an underground maze of ancient passageways that reveal the full extent of the Western Wall. Walk through 2,000-year-old stone corridors, see massive Herodian stones that weigh hundreds of tons, and discover secret chambers that tell the story of Jerusalem's ancient past. This isn't just a tour—it's a journey through time that connects you to the engineering marvels and spiritual significance of the Temple Mount.";
   }
   if (titleLower.includes('kotel')) {
@@ -274,7 +273,6 @@ export const getActivityDescription = (activity: ItineraryItem) => {
     return "Visit Rosh Hanikra's spectacular sea caves and grottoes. Take a cable car down to the Mediterranean coast and explore the natural tunnels carved by the sea. The views of the sea crashing against the white cliffs are absolutely breathtaking.";
   }
   if (titleLower.includes('old city shabbos')) {
-    console.log('Old City Shabbos description matched for:', activity.title);
     return "Daven Friday night at the Kotel—the holiest site in Judaism. Experience the spiritual energy of welcoming Shabbat at the Western Wall, surrounded by thousands of years of Jewish history and prayer. There's nothing like davening at the Kotel as the sun sets and Shabbat begins.";
   }
   if (titleLower.includes('old city')) {
