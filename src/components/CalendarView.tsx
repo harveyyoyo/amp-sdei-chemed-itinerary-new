@@ -152,28 +152,28 @@ export const CalendarView = ({ items, onUpdateItem }: CalendarViewProps) => {
   const getMultiDayInvertedColors = (eventTitle: string) => {
     const titleLower = (eventTitle || '').toLowerCase();
     
-    // Inverted colors for multi-day events based on their background
+    // Inverted colors that match the background gradients - dark backgrounds with light text
     if (titleLower.includes('tzfat') || titleLower.includes('tzfas')) {
-      return 'bg-amber-800 text-white border-amber-600';
+      return 'bg-amber-700 text-amber-50 border-amber-600 shadow-sm';
     }
     if (titleLower.includes('shabbos')) {
-      return 'bg-emerald-800 text-white border-emerald-600';
+      return 'bg-emerald-700 text-emerald-50 border-emerald-600 shadow-sm';
     }
     if (titleLower.includes('north overnight') || titleLower.includes('yurts')) {
-      return 'bg-sky-800 text-white border-sky-600';
+      return 'bg-sky-700 text-sky-50 border-sky-600 shadow-sm';
     }
     if (titleLower.includes('old city')) {
-      return 'bg-violet-800 text-white border-violet-600';
+      return 'bg-violet-700 text-violet-50 border-violet-600 shadow-sm';
     }
     if (titleLower.includes('eilat')) {
-      return 'bg-rose-800 text-white border-rose-600';
+      return 'bg-rose-700 text-rose-50 border-rose-600 shadow-sm';
     }
     if (titleLower.includes('off shabbos')) {
-      return 'bg-teal-800 text-white border-teal-600';
+      return 'bg-teal-700 text-teal-50 border-teal-600 shadow-sm';
     }
     
     // Default inverted colors for other multi-day events
-    return 'bg-gray-800 text-white border-gray-600';
+    return 'bg-gray-700 text-gray-50 border-gray-600 shadow-sm';
   };
 
   const getMultiDayBadgeColors = (eventTitle: string) => {
