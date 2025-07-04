@@ -94,11 +94,12 @@ export const getActivityDescription = (activity: ItineraryItem) => {
   if (titleLower.includes('meiron')) {
     return "Head to Meiron to visit the resting place of Rabbi Shimon bar Yochai, author of the Zohar. Whether you come to daven or just to think, it's a powerful experience.";
   }
+  if (titleLower.includes('kotel tunnel tours') || titleLower.includes('kotel tunnel')) {
+    console.log('Kotel Tunnel description matched for:', activity.title);
+    return "Venture deep beneath the surface to explore the hidden Kotel Tunnels—an underground maze of ancient passageways that reveal the full extent of the Western Wall. Walk through 2,000-year-old stone corridors, see massive Herodian stones that weigh hundreds of tons, and discover secret chambers that tell the story of Jerusalem's ancient past. This isn't just a tour—it's a journey through time that connects you to the engineering marvels and spiritual significance of the Temple Mount.";
+  }
   if (titleLower.includes('kotel')) {
     return "Stand at the Western Wall, the holiest site in Judaism. Millions have poured out their hearts here—now it's your chance to feel the weight of history and connection.";
-  }
-  if (titleLower.includes('kotel tunnel')) {
-    return "Go underground and explore the hidden tunnels beneath the Western Wall. See ancient stonework, secret passageways, and engineering that's thousands of years old.";
   }
   if (titleLower.includes('tefillin at army base')) {
     return "Put on tefillin with Israeli soldiers at an army base. This is about connecting with those who protect Israel, understanding their commitment, and sharing in the mitzvah together.";
@@ -272,6 +273,10 @@ export const getActivityDescription = (activity: ItineraryItem) => {
   if (titleLower.includes('rosh hanikra')) {
     return "Visit Rosh Hanikra's spectacular sea caves and grottoes. Take a cable car down to the Mediterranean coast and explore the natural tunnels carved by the sea. The views of the sea crashing against the white cliffs are absolutely breathtaking.";
   }
+  if (titleLower.includes('old city shabbos')) {
+    console.log('Old City Shabbos description matched for:', activity.title);
+    return "Daven Friday night at the Kotel—the holiest site in Judaism. Experience the spiritual energy of welcoming Shabbat at the Western Wall, surrounded by thousands of years of Jewish history and prayer. There's nothing like davening at the Kotel as the sun sets and Shabbat begins.";
+  }
   if (titleLower.includes('old city')) {
     return "Step into Jerusalem's Old City—a maze of history, culture, and energy. Every stone has a story, every corner reveals something new. Explore the different quarters, feel the weight of history, and understand why this city means so much to so many people.";
   }
@@ -366,11 +371,8 @@ export const getActivityDescription = (activity: ItineraryItem) => {
   if (titleLower.includes('shabbos chabad')) {
     return "Experience Shabbat with the Chabad community, joining in their warm, welcoming atmosphere. Enjoy traditional meals, meaningful conversations, and feel the special energy of Chabad hospitality.";
   }
-  if (titleLower.includes('old city shabbos')) {
-    return "Observe Shabbat in Jerusalem's Old City—the holiest place in Judaism. Feel the spiritual energy, join in traditional prayers and meals, and experience Shabbat in a place that has been sacred for thousands of years.";
-  }
   if (titleLower.includes('off shabbos')) {
-    return "Observe Shabbat in a relaxed, meaningful way. Take time to reflect, connect with friends, and enjoy the peace and spirituality of this special day. It's about finding your own way to experience Shabbat.";
+    return "Spend Shabbat visiting family or friends. Take time to reconnect with loved ones, share meals, and enjoy the warmth of home. It's a chance to step away from the camp routine and experience Shabbat in a more personal setting.";
   }
   if (titleLower.includes('shiva assur b\'tammuz')) {
     return "Learn about and observe Shiva Assur B'Tammuz, the fast day commemorating the breaching of Jerusalem's walls. It's a day for reflection, understanding our history, and thinking about what it means to be part of the Jewish people.";
